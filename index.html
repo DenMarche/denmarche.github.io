@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>reblog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #0a0722;
+    --dim: #666666;
+    --line: #ececec;
+    --link: #1524ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-weight: 300;
+    font-size: 25px;
+    line-height: 1.65;
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding-bottom: 20px;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  article {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  article:first-of-type {
+    padding-top: 16px;
+  }
+  .post-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .post-head .title {
+    flex: 1;
+    color: var(--fg);
+  }
+  .post-head .title:hover {
+    color: var(--link);
+  }
+  article .meta {
+    color: var(--dim);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  article .meta a {
+    color: var(--dim);
+    text-decoration: none;
+  }
+  article .meta a:hover {
+    color: var(--fg);
+  }
+  article .body {
+    display: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin-top: 14px;
+    padding-left: 20px;
+    border-left: 2px solid var(--line);
+    font-size: 17px;
+  }
+  article.open .body {
+    display: block;
+  }
+  article .body pre {
+    background: #fafafa;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre;
+    margin: 16px 0;
+  }
+  article .body pre code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    background: none;
+    padding: 0;
+  }
+  article .body code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9em;
+    background: #f2f2f2;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  article .body img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 16px 0;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  footer {
+    margin-top: 56px;
+    color: var(--dim);
+    font-size: 13px;
+    text-align: center;
+  }
+  footer a {
+    color: var(--dim);
+    text-decoration: none;
+  }
+  footer a:hover {
+    color: var(--fg);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Lucef's RE Blog</h1>
+</header>
+
+<main id="feed"></main>
+
+<footer>
+  <a href="mailto:you@example.com">Contact me</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+
+const POSTS = [
+  {
+    date: "2026-09-30",
+    source: "https://example.com/some-article",
+    sourceName: "Posted by @.naxel.",
+    title: "How to whitelist yourself in Hyperion's CFG using only a VEH.",
+    body: `Tomorrow :cold_face:`
+  },
+  {
+    date: "2026-09-30",
+    source: "https://example.com/some-article",
+    sourceName: "Posted by @.naxel.",
+    title: "How to fool Hyperion and abuse it's remapping feature to whitelist your pages (Win10).",
+    body: `Hi robloxians, Naxel here.
+As we found out over time, Hyperion's constant remap feature is quite simple in terms of implementation - a good (and simplified) example of what they do is https://github.com/changeofpace/Self-Remapping-Code
+
+But in addition to the provided example, Hyperion also uses a .tmp file for a more secure way of remapping itself. The good thing is that the technique is brilliant. The bad thing is that it's brilliant only on Windows 11, which has certain "safe-guards" in the kernel, unlike Windows 10 - which is the reason this post has a (Win10) label on the end of it.
+
+If in short: the file is locked by Hyperion itself, meaning they can NOT open it without risking a "fuck up" in their constant remap routine. They can not check the integrity of the tmp itself as well. Windows 10 has a "bug" that allows the .tmp file to be opened (NtCreateSection with SEC_IMAGE ignores the sharing mode on Win10), even while it is locked. Mapping the .tmp is possible, and will work to allocate whitelisted pages.
+
+As much as I am generous, I will provide example code below.`,
+    lang: "cpp",
+    img: "https://media.discordapp.net/attachments/1541122806593618041/1553513754207977522/image.png?ex=6abd7a6d&is=6abc28ed&hm=3ed8641a5865808248e41c9094ac5bad28990a3ae6db141400b592d72694d106&=&format=webp&quality=lossless",
+    imgAlt: "screenshot",
+    code: `bool AllocatePagesSizeOf(DWORD pid, const char* TmpPath, const uint8_t* LibraryBytes, SIZE_T LibrarySize)
+{
+    HANDLE p = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
+    if (!p) return false;
+
+    HANDLE tf = CreateFileA(tmpPath, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+        nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (tf == INVALID_HANDLE_VALUE) { CloseHandle(p); return false; }
+
+    DWORD wr = 0;
+    WriteFile(tf, LibraryBytes, (DWORD)LibrarySize, &wr, nullptr);
+    CloseHandle(tf);
+    if (wr != LibrarySize) { CloseHandle(p); return false; }
+
+    auto* dh = (PIMAGE_DOS_HEADER)LibraryBytes;
+    auto* nh = (PIMAGE_NT_HEADERS64)(LibraryBytes + dh->e_lfanew);
+    const SIZE_T is = nh->OptionalHeader.SizeOfImage;
+    const SIZE_T ck = 0x10000;
+    const SIZE_T al = (is + ck - 1) & ~(ck - 1);
+
+    ULONG64 ba = 0;
+    {
+        MEMORY_BASIC_INFORMATION mb = {};
+        for (PBYTE pb = (PBYTE)0x10000; VirtualQueryEx(p, pb, &mb, sizeof(mb));
+            pb = (PBYTE)mb.BaseAddress + mb.RegionSize)
+        {
+            if (mb.State != MEM_FREE || mb.RegionSize < al) continue;
+            ULONG64 aa = ((ULONG64)mb.BaseAddress + 0xFFFF) & ~(ULONG64)0xFFFF;
+            if (aa + al <= (ULONG64)mb.BaseAddress + mb.RegionSize) { ba = aa; break; }
+        }
+    }
+    if (!ba) { CloseHandle(p); return false; }
+
+    HANDLE df = CreateFileA(tmpPath, GENERIC_READ | GENERIC_EXECUTE, FILE_SHARE_READ,
+        nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (df == INVALID_HANDLE_VALUE) { CloseHandle(p); return false; }
+
+    for (SIZE_T i = 0; i < al / ck; ++i)
+    {
+        HANDLE sc = nullptr;
+        LARGE_INTEGER li = {};
+        if (!NT_SUCCESS(NtCreateSection(&sc, SECTION_ALL_ACCESS, nullptr, &li,
+            PAGE_READONLY, SEC_IMAGE, df)))
+            continue;
+
+        PVOID ad = (PVOID)(ba + i * ck);
+        SIZE_T vz = ck;
+        NTSTATUS ms = NtMapViewOfSection(sc, p, &ad, 0, 0, nullptr, &vz,
+            ViewShare, 0, PAGE_READONLY);
+        CloseHandle(sc);
+        if (NT_SUCCESS(ms))
+        {
+            DWORD od = 0;
+            VirtualProtectEx(p, ad, ck, PAGE_EXECUTE_READWRITE, &od);
+        }
+    }
+    CloseHandle(df);
+
+    DWORD od = 0;
+    VirtualProtectEx(p, (PVOID)ba, al, PAGE_EXECUTE_READWRITE, &od);
+
+    auto* id = (uint8_t*)calloc(al, 1);
+    if (!id) { CloseHandle(p); return false; }
+    memcpy(id, LibraryBytes, nh->OptionalHeader.SizeOfHeaders);
+    auto* sx = IMAGE_FIRST_SECTION(nh);
+    for (WORD s = 0; s < nh->FileHeader.NumberOfSections; ++s)
+    {
+        if (!sx[s].SizeOfRawData) continue;
+        memcpy(id + sx[s].VirtualAddress, LibraryBytes + sx[s].PointerToRawData, sx[s].SizeOfRawData);
+    }
+
+    INT64 dl = (INT64)(ba - nh->OptionalHeader.ImageBase);
+    if (dl)
+    {
+        const auto& dr = nh->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC];
+        if (dr.VirtualAddress && dr.Size)
+        {
+            auto* bl = (PIMAGE_BASE_RELOCATION)(id + dr.VirtualAddress);
+            PBYTE en = id + dr.VirtualAddress + dr.Size;
+            while ((PBYTE)bl < en && bl->SizeOfBlock >= sizeof(IMAGE_BASE_RELOCATION))
+            {
+                DWORD cn = (bl->SizeOfBlock - sizeof(IMAGE_BASE_RELOCATION)) / sizeof(WORD);
+                PWORD et = (PWORD)((PBYTE)bl + sizeof(IMAGE_BASE_RELOCATION));
+                for (DWORD i = 0; i < cn; ++i)
+                {
+                    if ((et[i] & 0xF000) == (IMAGE_REL_BASED_DIR64 << 12))
+                        *(ULONG64*)(id + bl->VirtualAddress + (et[i] & 0xFFF)) += dl;
+                }
+                bl = (PIMAGE_BASE_RELOCATION)((PBYTE)bl + bl->SizeOfBlock);
+            }
+        }
+    }
+
+    SIZE_T bw = 0;
+    NTSTATUS ws = NtWriteVirtualMemory(p, (PVOID)ba, id, is, &bw);
+    free(id);
+    if (!NT_SUCCESS(ws)) { CloseHandle(p); return false; }
+
+    for (WORD s = 0; s < nh->FileHeader.NumberOfSections; ++s)
+    {
+        DWORD fc = sx[s].Characteristics;
+        DWORD pr = (fc & IMAGE_SCN_MEM_EXECUTE) ? PAGE_EXECUTE_READ
+                 : (fc & IMAGE_SCN_MEM_WRITE)   ? PAGE_READWRITE
+                 : PAGE_READONLY;
+        VirtualProtectEx(p, (PVOID)(ba + sx[s].VirtualAddress),
+            sx[s].Misc.VirtualSize, pr, &od);
+    }
+
+    auto entry = (void(*)())(ba + nh->OptionalHeader.AddressOfEntryPoint);
+    (void)entry;
+
+    CloseHandle(p);
+    return true;
+}`
+  }
+];
+// --------------------------------
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+const feed = document.getElementById("feed");
+feed.innerHTML = POSTS.map((p, i) => {
+  const codeBlock = p.code
+    ? `<pre><code class="language-${p.lang || 'cpp'}">${esc(p.code)}</code></pre>`
+    : "";
+  const imgBlock = p.img
+    ? `<img src="${esc(p.img)}" alt="${esc(p.imgAlt || '')}" loading="lazy">`
+    : "";
+  return `
+  <article data-index="${i}">
+    <div class="post-head">
+      <span class="title">${esc(p.title)}</span>
+    </div>
+    <div class="meta">
+      ${p.date} · <a href="${p.source}" target="_blank" rel="noopener">${esc(p.sourceName)}</a>
+    </div>
+    <div class="body">${esc(p.body)}${codeBlock}${imgBlock}</div>
+  </article>`;
+}).join("");
+
+document.querySelectorAll("pre code").forEach(el => hljs.highlightElement(el));
+
+feed.addEventListener("click", e => {
+  if (e.target.closest("pre")) return;
+  const head = e.target.closest(".post-head");
+  if (!head) return;
+  head.parentElement.classList.toggle("open");
+});
+
+</script>
+
+</body>
+</html>
